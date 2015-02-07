@@ -1,0 +1,24 @@
+{
+  "name": "event-calendar",
+  "version": "0.0.1",
+  "description": "Custom calendar polymer components with support for events display.",
+  "license": "MIT",
+  "main": "dist/event-calendar.html",
+  "keywords": [
+    "polymer",
+    "web-components",
+    "webcomponents",
+    "calendar"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^0.5.1",
+    "core-icon-button": "Polymer/core-icon-button#~0.5.4",
+    "moment": "~2.9.0",
+    "core-pages": "Polymer/core-pages#~0.5.4"
+  }
+}

@@ -1,0 +1,299 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/core-pages/core-pages.html">
+<link rel="import" href="../bower_components/core-icon-button/core-icon-button.html">
+<!--
+<link rel="import" href="../bower_components/moment/min/moment.min.js">
+-->
+<polymer-element name="calendar-month-day" attributes="date events" vertical layout>
+	<template>
+		<style>
+			:host {
+				border: 1px solid black;
+			}
+			#dayBox {
+				min-height: 15px
+			}
+			.today {
+				background-color: #660000;
+				color: white;
+			}
+			.day {
+				background-color: white;
+				color: black;
+			}
+			.selected {
+				border: 2px solid #660000;
+				background-color: white;
+			}
+			.event {
+				border: 1px solid black;
+				background-color: #ffff99;
+				color: black;
+				overflow: hidden;
+			}
+		</style>
+		<div id="dayBox" class="{{classFor(date, selected)}}" flex on-tap="{{tapped}}" vertical layout>
+			<div flex>{{date | formatDate}}</div>
+			<template repeat="{{event in events}}">
+				<div class="event">{{event.venue.name}}</div>
+			</template>
+		</div>
+	</div>
+</template>
+<script src="../bower_components/moment/min/moment.min.js"></script>
+<script>
+	Polymer({
+		created: function() {
+			this.events = new Array();
+		},
+		classFor: function(date, selected) {
+			if (moment(date).isSame(moment(), 'day'))
+				return 'today';
+			if (this.selected)
+				return 'selected';
+			return 'day';
+		},
+		formatDate: function(date) {
+			return moment(date).date();
+		},
+		// Event management
+		setEvent: function(event) {
+			this.events.push(event);
+		},
+		removeEvent: function(event) {
+			if (this.events.conteains(event)) {
+				idx = events.indexOf(event);
+				this.events.splice(idx);
+			}
+		},
+		clearEvents: function() {
+			this.events = [];
+		},
+		// Fire custom event when tapped to permit main calendar to manage
+		// selections.
+		tapped: function() {
+			this.selected = true;
+			this.fire('day-selected', this);
+		}
+	});
+</script>
+</polymer-element>
+
+<polymer-element name="calendar-month-week" attributes="weekNum curDate firstDate" horizontal layout justified>
+	<template>
+		<!--<style>	:host {	border: 1px solid red; 	}	</style>-->
+		<template repeat="{{weekDay in weekDays}}">
+			<calendar-month-day id="day{{weekDay}}" date="{{weekDay | toDate(firstDate)}}" flex></calendar-month-day>
+		</template>
+	</template>
+	<script>
+		Polymer({
+			weekDays: [0,1,2,3,4,5,6],
+			toDate: function(weekDay, firstDate) {
+				return moment(firstDate).add(weekDay, 'd');
+			}
+		});
+	</script>
+</polymer-element>
+
+<polymer-element name="week-header" attributes="">
+	<template>
+		<style> .dayHeader { 
+			/*border: 1px solid green; */
+		}
+		</style>
+		<div class="dayHeader" horizontal layout justified>
+			<template repeat="{{day in daysOfWeek}}">
+				<div flex class="dayHeader">{{day}}</div>
+			</template>
+		</div>
+	</template>
+	<script>
+		Polymer({
+			daysOfWeek: moment.weekdaysShort(),
+			created: function() {
+			}
+		});
+	</script>
+</polymer-element>
+
+<polymer-element name="calendar-month" attributes="curDate weekHeader monthHeader events" layout vertical on-day-selected="{{daySelected}}">
+	<template>
+		<style> 
+			/*:host { border: 1px solid yellow; } */
+		:host, calendar-month {
+			height: 100%;
+		}
+		.header {
+			background-color: #330033;
+			color: white;
+		}
+		.eventList {
+			overflow: scroll;
+		}
+		.eventListItem {
+			background-color: white;
+			color: dimgray;
+			border-bottom: 1px solid lightslategrey;
+			padding-bottom: 15px;
+			text-align: center;
+		}
+		.eventDate {
+			font-weight: bold;
+		}
+		</style>
+		<div horizontal layout center center-justified class="header">
+			<core-icon-button icon="add"></core-icon-button>
+			<div flex></div>
+			<div hidden="{{viewList}}">stuff to hide</div>
+			<core-icon-button icon="chevron-left" on-tap="{{monthBack}}"></core-icon-button>
+			<div>{{formatMonth(curDate)}}</div>
+			<core-icon-button icon="chevron-right" on-tap="{{monthForward}}"></core-icon-button>
+			<div flex></div>
+			<core-icon-button icon="today" on-tap="{{todayTapped}}"></core-icon-button>
+			<template if="{{viewList}}">
+				<core-icon-button icon="apps" on-tap="{{toggleViewList}}"></core-icon-button>
+			</template>
+			<template if="{{!viewList}}">
+				<core-icon-button icon="view-list" on-tap="{{toggleViewList}}"></core-icon-button>
+			</template>
+		</div>
+		<!-- Use core-pages to display either calendar or list of events -->
+		<core-pages flex selected="{{selectedPage}}">
+			<div flex layout vertical>
+				<template repeat="{{week in weeks}}">		
+					<calendar-month-week flex id="week{{week}}" weekNum="{{week}}" curDate="{{curDate}}" firstDate="{{firstDateInWeek(curDate, week)}}"></calendar-month-week>
+				</template>
+			</div>
+			<div flex layout vertical class="eventList">
+				<template if="{{noEvents}}">No events to display</template>
+				<template repeat="{{event in events}}">
+					<div class="eventListItem" layout horizontal around-justified on-tap="{{eventListItemTapped}}">
+						<div class="eventDate">{{formatEventDate(event)}}</div>
+						<div >{{formatEventTimes(event)}}</div>
+						<div>{{event.venue.name}}</div>
+					</div>
+				</template>
+			</div>
+		</core-pages>
+	</template>
+	<script>
+		Polymer({
+			// Display 6 weeks on a calendar
+			weeks: [0, 1, 2, 3, 4, 5],
+			viewList: false,
+			selectedPage: 0,
+			created: function() {
+				// Convert curDate to moment if needed and set to 12:00 AM
+				// Defaults to now
+				this.curDate = this.curDate ? moment(this.curDate) : moment();
+			},
+			firstDateInWeek: function(curDate, week) {
+				var monthFirstDay = moment(curDate).startOf('month');
+				return moment(monthFirstDay).startOf('week').add(week, 'w');
+			},
+			get firstDateInCalendar() {
+				return this.dayFor(0,0).date;
+			},
+			get lastDateInCalendar() {
+				return this.dayFor(this.weeks.length-1, 6).date;
+			},
+			monthBack: function() {
+				this.curDate = moment(this.curDate).subtract(1, 'month');
+			},
+			monthForward: function() {
+				this.curDate = moment(this.curDate).add(1, 'month');
+			},
+			dayFor: function(weekNum, dayNum) {
+				if (weekNum < 0 || weekNum >= this.weeks.length || dayNum < 0 || dayNum > 6)
+					return;
+				return this.weekFor(weekNum).shadowRoot.querySelector('#day' + dayNum);
+			},
+			weekFor: function(weekNum) {
+				if (weekNum < 0 || weekNum >= this.weeks.length)
+					return;
+				return this.shadowRoot.querySelector('#week' + weekNum);
+			},
+			dayForDate: function(date) {
+				var refDate = moment(date).startOf('day');
+				if (refDate < this.firstDateInCalendar || refDate > this.lastDateInCalendar)
+					return;
+				var weekNum = Math.floor(refDate.diff(this.firstDateInCalendar, 'days') / 7);
+				if (weekNum >= this.weeks.length) return null;
+				var dayNum = Math.floor(refDate.diff(this.weekFor(weekNum).firstDate, 'days'));
+				var day = this.dayFor(weekNum, dayNum);
+				return day;
+			},
+			setEvents: function(eventList) {
+				if (!eventList || !eventList.length)
+					return;
+				for (var idx = 0; idx < eventList.length; idx++) {
+					var startTime = moment(eventList[idx].start);
+					var day = this.dayForDate(startTime);
+					if (day) day.setEvent(eventList[idx]);
+				}
+			},
+			clearEvents: function() {
+				for (var weekNum = 0; weekNum < this.weeks.length; weekNum++) {
+					for (var dayNum = 0; dayNum < 7; dayNum++) {
+						var day = this.dayFor(weekNum, dayNum);
+						if (day) day.clearEvents();
+					}
+				}
+			},
+			curDateChanged: function(oldDate, newDate) {
+				//console.log('calendar-month: new curDate=' + newDate.format('L'));
+				// Ensure that curDate is a moment object
+				if (!moment.isMoment(this.curDate))
+					this.curDate = moment(this.curDate);
+				// The below is needed when tapping on a day moved the calendar into another month:
+				// After the calendar changes, the selected day object will be in the wrong position.
+				if (this.selectedDay && !this.curDate.isSame(this.selectedDay.date)) {
+					this.selectedDay.selected = false;
+					this.selectedDay = this.dayForDate(this.curDate);
+					this.selectedDay.selected = true;
+				}
+			},
+			eventsChanged: function(oldVal, newVal) {
+				this.curDate = this.curDate.startOf('d');
+				//console.log('calendar-month eventsChanged()');
+				this.clearEvents();
+				this.setEvents(this.events);
+			},
+			todayTapped: function() {
+				this.curDate = moment();
+			},
+			// This event bubbles up from the sending day which permits the calendar to 
+			// manage selections. The sending day sets itself as the 'detail' argument. 
+			// The 'sender' argument will be set to this calendar-month object, which is 
+			// not useful here.
+			daySelected: function(event, day, sender) {
+				if (this.selectedDay) this.selectedDay.selected = false;
+				day.selected = true;
+				this.selectedDay = day;
+				this.curDate = this.selectedDay.date
+			},
+			toggleViewList: function() {
+				this.viewList = !this.viewList;
+				this.selectedPage = this.viewList ? 1 : 0;
+			},
+			eventListItemTapped: function(event, detail, sender) {
+				//console.log('eventListItemTapped');
+			},
+			formatMonth: function(date) {
+				return moment(date).format('MMM').toUpperCase();
+			},
+			formatEventDate: function(event) {
+				return moment(event.start).format('ddd, MMM D');
+			},
+			formatEventTimes: function(event) {
+				return moment(event.start).format('h:mma') + ' to ' + moment(event.end).format('h:mma');
+			},
+			noEvents: function() {
+				return !events || !events.length;
+			}
+
+
+		});
+	</script>
+</polymer-element>

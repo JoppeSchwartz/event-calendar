@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<!-- Copyright (c) 2015 Joe Schwartz. See LICENSE file for terms and conditions. -->
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+		<title>Event Calendar Demo</title>
+		<meta charset="UTF-8">
+		<title>&lt;event-calendar&gt;</title>
+
+		<!-- Importing Web Component's Polyfill -->
+		<script src="bower_components/webcomponentsjs/webcomponents.min.js"></script>
+
+		<!-- Importing Custom Elements -->
+		<link rel="import" href="src/calendar-month.html">
+		<style>
+			body {
+				height: 100%;
+			}
+		</style>
+	</head>
+	<body fullbleed vertical layout>
+
+		<h1>Month Calendar</h1>
+		<calendar-month flex curDate="2015-02-07"></calendar-month>
+
+
+
+	</body>
+</html>
