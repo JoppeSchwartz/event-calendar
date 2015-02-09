@@ -1,0 +1,76 @@
+<link rel="import" href="./calendar-day.html">
+
+<polymer-element name="calendar-week" attributes="curDate events header events startHour" layout vertical>
+	<template>
+		<style>
+			:host, calendar-week {
+				display: block;
+				height: 100%;
+				overflow-y: scroll;
+				border: 1px solid black;
+			}
+			.weekHeader {
+				background-color: grey;
+				color: white;
+				text-align: center;
+			}
+			.dayHeader {
+				background-color: grey;
+				color: white;
+				text-align: center;
+			}
+			.day {
+				border: 1px solid black;
+			}
+			.scroll {
+				overflow-y: scroll;
+			}
+		</style>
+		<template if="{{header != null}}">
+			<div layout horizontal class="weekHeader" center center-justified>
+				<core-icon-button icon="chevron-left" on-tap="{{weekBack}}"></core-icon-button>
+				<div>{{formatDateRange(days)}}</div>
+				<core-icon-button icon="chevron-right" on-tap="{{weekForward}}"></core-icon-button>
+			</div>
+			<div layout horizontal>
+				<template repeat="{{day in days}}"> 
+					<div flex class="dayHeader">{{day | formatDayHeader}}</div>
+				</template>
+			</div>
+		</template>
+		<div horizontal layout flex scroll>
+			<template repeat="{{day, idx in days}}">
+				<div flex vertical layout>
+					<calendar-day flex date="{{day}}" events="{{events}}" startHour="{{startHour}}" nohours?="{{idx != 6}}"></calendar-day>
+				</div>
+			</template>
+		</div>
+	</template>
+	<script>
+		Polymer( {
+			ready: function() {
+			},
+			formatDayHeader: function(day) {
+				if (day)
+					return day.format('ddd M/D');
+			},
+			formatDateRange: function(days) {
+				if (!days || !days.length) return;
+				return days[0].format('M/D') + '-' + days[6].format('M/d');
+			},
+			curDateChanged: function(oldVal, newVal) {
+				this.days = [];
+				var startDate = moment(this.curDate).startOf('week');
+				for (i = 0; i < 7; i++) {
+					this.days.push(moment(startDate).startOf('d').add(i, 'd'));
+				}
+			},
+			weekBack: function() {
+				this.curDate = moment(this.curDate).subtract(1, 'week');
+			},
+			weekForward: function() {
+				this.curDate = moment(this.curDate).add(1, 'week');
+			}
+		});
+	</script>
+</polymer-element>

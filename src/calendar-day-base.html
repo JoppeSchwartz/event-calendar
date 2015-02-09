@@ -1,0 +1,32 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<polymer-element name="calendar-day-base" attributes="date events">
+	<template>
+	</template>
+	<script>
+		Polymer({
+			created: function() {
+				this.events = [];
+				this.myEvents = [];
+			},
+			eventsForDate: function (events, date) {
+				if (typeof this.date === 'undefined' || !this.date || !this.events || ! this.events.length) {
+					this.myEvents = [];
+					return;
+				}
+				this.myEvents = (function(d) { 
+					return events.filter(function(el, idx, ar) {
+						return moment(el.start).isSame(d, 'd');
+					});
+				})(date);
+			},
+			eventsChanged: function(oldVal, newVal) {
+				this.async(this.eventsForDate, [this.events, this.date]);
+			},
+			dateChanged: function (oldVal, newVal) {
+				this.async(this.eventsForDate, [this.events, newVal]);
+			}
+		});
+	</script>
+</polymer-element>
+
