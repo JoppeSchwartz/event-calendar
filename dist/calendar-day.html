@@ -3,7 +3,7 @@
 <link rel="import" href="./calendar-day-base.html">
 <script src="../../moment/min/moment.min.js"></script>
 
-<polymer-element name="calendar-day" attributes="events date startHour header scroll" extends="calendar-day-base" layout vertical>
+<polymer-element name="calendar-day" attributes="events date startHour header scroll nohours" extends="calendar-day-base" layout vertical>
 	<template>
 		<style>
 			:host, calendar-day {
@@ -33,7 +33,6 @@
 				left: 0;
 				position: relative;
 				overflow: hidden;
-				height: 0;
 			}
 			div[spacer] {
 				color: transparent;
@@ -46,25 +45,34 @@
 				<core-icon-button icon="chevron-right" on-tap="{{dayForward}}"></core-icon-button>
 			</div>
 		</template>
-		<div flex vertical layout class="{{(scroll != null) ? 'scroll' : 'noscroll'}}">
+		<div flex vertical layout class="{{(scroll != null) ? 'scroll' : 'noscroll'}}" relative>
 			<div layout horizontal flex>
-				<div vertical layout flex>
+				<!-- Grid rows -->
+				<div vertical layout flex relative>
 					<template repeat="{{hour in hours}}">
 						<div flex id="gridRow{{hour.value}}" class="backgroundGrid"></div>
 					</template>
+					<!-- This next div fits itself to the nearest relative containing
+					div, so it overlaps this section of the background grid and not the
+					hours legend. -->
+					<div fit>
+						<div layout horizontal>
+							<template repeat="{{event, eventIdx in myEvents}}">
+								<!-- Style each event to offset its top and set its height
+								appropriately. -->
+								<div flex id="event{{eventIdx}}" class="event" style="{{event | eventStyle | styleObject }}" on-tap="{{eventTapped}}"><b>{{event.title}}</b> {{event | formatTimes}}</div>
+							</template>
+						</div>
+					</div>
 				</div>
-				<div vertical layout>
+				<!-- Hours legend -->
+				<div vertical layout hidden?="{{ nohours != null}}">
 					<template repeat="{{hour in hours}}">
 						<div flex id="hour{{hour.value}}" class="backgroundGrid">{{hour.label}}</div>
 					</template>
 				</div>
 			</div>
-			<div layout horizontal> 
-				<template repeat="{{event, eventIdx in myEvents}}">
-					<div flex id="event{{eventIdx}}" class="event" style="{{event | eventStyle | styleObject }}">{{event.title}}</div>
-				</template>
-				<div spacer>25pm</div>
-			</div>		
+
 		</div>
 	</template>
 	<script>
@@ -86,38 +94,46 @@
 					return date.format('ddd, MMM D').toUpperCase();
 				}
 			},
+			formatTimes: function(event) {
+				if (event)
+					return event.start.format('h:mm') + '-' + event.end.format('h:mm');
+			},
+			/*  Compute the top and height of the event element. The top is, for
+					now, equal to the top of the sdtarting hour's row. The heigh, for
+					now, is equal to the vertical distance from from the top of the
+					starting hour's row to the bottom of the ending hour's row.  */
+			/*	TODO:	reflect fractional hours in start/end */
 			eventStyle: function(event) {
-				/*  Compute the height of the event element: for now, equal to the
-						vertical distance from from the top of the starting hour's row to
-						the bottom of the ending hour's row.
-TODO: reflect fractional hours in start/end
-				 */
+
 				var start = moment(event.start);
 				var end = moment(event.end);
 				var topHour = start.hour();
 				if (topHour < this.startHour) topHour = this.startHour;
 				var botHour = end.hour();
-				var lastDiv = this.shadowRoot.querySelector('#hour23');
 
-				var top = this.shadowRoot.querySelector('#hour' + topHour).offsetTop;
-				var botDiv;
+				/* ISSUE: Sometimes this callback gets called before the framework has
+					 prepared the DOM. In that instance, return immediately. To be
+					 investigated. It may derive from overeager recalculating of
+					 myEvents in calendar-day-base.  */
+				var topRow = this.shadowRoot.querySelector('#gridRow' + topHour);
+				if (!topRow) 
+					return;
+				
+				var top = topRow.offsetTop;
+
+				var botRow;
+				/* TODO: make variable last div to support 24-hour days starting at
+				arbitrary hours.*/
+				var lastDiv = this.shadowRoot.querySelector('#gridRow23');
 				if (start.isSame(end, 'd')) {
-					botDiv = this.shadowRoot.querySelector('#hour' + botHour);
+					botRow = this.shadowRoot.querySelector('#gridRow' + botHour);
 				}
 				else {
-					botDiv = lastDiv;
+					botRow = lastDiv;
 				}
-				var bot = botDiv.offsetTop + botDiv.offsetHeight;
+				var bot = botRow.offsetTop + botRow.offsetHeight;
 				var height = bot - top;
-				/*	Since this is a relatively positioned element, compute an offset
-						that will move it up by the distance from the top of the starting
-						hour row to the bottom of the bottom of the last row, where it
-						naturally would be positioned otherwise.
-				 */
-				var topOffset = top - (lastDiv.offsetTop + lastDiv.offsetHeight);
-				// Align the element to the left.
-				var left = 0;
-				return { visibility: 'visible', top: topOffset + 'px', height: height + 'px', left: left + 'px' };
+				return { top: top + 'px', height: height + 'px' };
 			},
 			dayBack: function() {
 				// This syntax, by assigning a new object to the bound property, forces
@@ -126,6 +142,10 @@ TODO: reflect fractional hours in start/end
 			},
 			dayForward: function() {
 				this.date = moment(this.date).add(1, 'd');
+			},
+			// TODO: make this event useful.
+			eventTapped: function(event, detail, sender) {
+				this.fire('event-tapped', sender);
 			}
 		});
 	</script>

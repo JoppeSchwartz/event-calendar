@@ -38,9 +38,11 @@
 				</template>
 			</div>
 		</template>
-		<div horizontal layout flex class="scroll">
-			<template repeat="{{day in days}}">
-					<calendar-day flex date="{{day}}" events="{{events}}" startHour="{{startHour}}" style="height:450px"></calendar-day>
+		<div horizontal layout flex scroll>
+			<template repeat="{{day, idx in days}}">
+				<div flex vertical layout>
+					<calendar-day flex date="{{day}}" events="{{events}}" startHour="{{startHour}}" nohours?="{{idx != 6}}"></calendar-day>
+				</div>
 			</template>
 		</div>
 	</template>
