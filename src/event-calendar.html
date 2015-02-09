@@ -34,13 +34,12 @@
 			<calendar-day date="{{curDate}}" events="{{events}}" header="{{header}}" scroll startHour="{{startHour}}"></calendar-day>
 			<event-list events="{{events}}" header="{{header}}"></event-list>
 		</core-pages>
-		<div>View:&nbsp;{{view}}</div>
-		<div>Selected page:&nbsp;{{viewPage[view]}}</div>
 	</template>
 	<script>
 		Polymer('event-calendar', {
 			// Fires when an instance of the element is created
 			created: function() {
+				this.events = [];
 				this.viewPage = {
 					'month' : 0,
 					'week'	: 1,
@@ -49,6 +48,23 @@
 				};
 				this.view = 'month';
 			},
+			eventsChanged: function() {
+				// Validate events
+				for (var i = 0; i < this.events.length; i++) {
+					var ev = this.events[i];
+					// Each events must have a start & stop.
+					if (!ev.start || !ev.end) 
+						this.fire('event-calendar-error', 'Each event must have a start and end.');
+					// Make sure each start and stop is a moment or moment-compatible.
+					if (!moment.isMoment(ev.start))
+						ev.start = moment(ev.start);
+					if (!moment.isMoment(ev.end))
+						ev.end = moment(ev.end);
+					// Ensure the start < end.
+					if (ev.end < ev.start) 
+						this.fire('event-calendar-error', 'event.start must precede event.end');
+				}
+			},
 
 			// Fires when the "<polymer-element>" has been fully prepared
 			ready: function() {},
@@ -56,7 +72,6 @@
 				this.view = sender.getAttribute('value');
 				return;
 			},
-
 			// Fires when the element’s initial set of children and siblings are guaranteed to exist
 			domReady: function() {},
 
