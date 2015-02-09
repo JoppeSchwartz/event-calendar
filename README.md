@@ -24,16 +24,24 @@ Or [download as ZIP](https://github.com/JoppeSchwartz/event-calendar/archive/mas
     <script src="bower_components/webcomponentsjs/webcomponents.min.js"></script>
     ```
 
-2. Import Custom Element:
+2. Import one or more Custom Elements: 
 
     ```html
-    <link rel="import" href="bower_components/event-calendar/dist/event-calendar.html">
+    <link rel="import" href="bower_components/event-calendar/dist/calendar-month.html">
+    ```
+
+    ```html
+    <link rel="import" href="bower_components/event-calendar/dist/calendar-week.html">
+    ```
+
+    ```html
+    <link rel="import" href="bower_components/event-calendar/dist/calendar-day.html">
     ```
 
 3. Start using it!
 
     ```html
-    <event-calendar></event-calendar>
+    <calendar-month curDate="2015-2-10"></calendar-month>
     ```
 
 ## Options

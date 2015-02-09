@@ -34,7 +34,7 @@
 		<div id="dayBox" class="{{classFor(date, selected)}}" flex on-tap="{{tapped}}" vertical layout>
 			<div flex>{{date | formatDate}}</div>
 			<template repeat="{{event in events}}">
-				<div class="event">{{event.venue.name}}</div>
+				<div class="event">{{event | formatEvent}}</div>
 			</template>
 		</div>
 	</div>

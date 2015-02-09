@@ -11,19 +11,109 @@
 		<script src="bower_components/webcomponentsjs/webcomponents.min.js"></script>
 
 		<!-- Importing Custom Elements -->
+		<link rel="import" href="src/event-calendar.html">
 		<link rel="import" href="src/calendar-month.html">
+		<link rel="import" href="src/calendar-week.html">
+		<link rel="import" href="src/calendar-day.html">
 		<style>
 			body {
 				height: 100%;
+				font-family: Gill Sans MT, Gill Sans, Calibri, sans-serif;
+			}
+			.monthCal {
+				min-height: 400px;
+			}
+			.weekCal, .dayCal {
+				max-height: 200px;
+			}
+			h2, .centered {
+				text-align: center;
 			}
 		</style>
 	</head>
-	<body fullbleed vertical layout>
+	<body fullbleed layout vertical>
+		<h1>event-calendar demo</h1>
+		<template id="demo" is="auto-binding">
+			<div class="centered">header: <input type="checkbox" checked="{{monthHeader}}"> | current date: {{formatDate(curDate)}}</div>
+			<event-calendar curDate="{{curDate}}" events="{{events}}" header?="{{monthHeader}}" startHour="8" view="month"></event-calendar>
+			<!--<h2>month view&nbsp;</h2>
+			<div class="centered">header: <input type="checkbox" checked="{{monthHeader}}">current date:&nbsp;{{formatDate(curDate)}}</div>
+			<calendar-month class="monthCal" curDate="{{curDate}}" events="{{events}}" header?="{{monthHeader}}"></calendar-month>
+			<h2>week view&nbsp;</h2>
+			<div class="centered">header: <input type="checkbox" checked="{{weekHeader}}"></div>
+			<calendar-week class="weekCal" curDate="{{curDate}}" events={{events}} header?="{{weekHeader}}"></calendar-week>
+			-->
+<!--			<div horizontal layout center-justified>
+				<div>
+					<h2>day view&nbsp;</h2>
+					<div>header: <input type="checkbox" checked="{{dayHeader}}"></div>
+					<calendar-day date="{{curDate}}" events="{{events}}" startHour="8" header?="{{dayHeader}}"></calendar-day>
+				</div>
+				<div>
+					<h2>add events</h2>
+					<div horizontal layout end> 
+						<div vertical layout>
+							<div>title</div>
+							<div>venue</div>
+							<div>start</div>
+							<div>end</div>
+						</div>
+						<div>&nbsp;</div>
+						<div vertical layout>
+							<div><input id="title" name="title" type="text" value="{{title}}"></div>
+							<div><input id="venue" name="venue" type="text" value="{{venue}}"></div>
+							<div><input id="startDate" name="startDate" type="date" value="{{startDate}}"></div>
+							<div><input id="endDate" name="endDate" type="date" value="{{endDate}}"></div>
+						</div>
+						<div vertical layout>
+							<div></div>
+							<div><input id="startTime" type="time" value="{{startTime}}"></div>
+							<div><input id="endTime" type="time" value="{{endTime}}"></div>
+						</div>
+						<div><button on-tap="{{addEvent}}">add</button></div>
+					</div>
+					<h2>remove all events</h2>
+					<button on-tap="{{removeEvents}}">remove all</button>
+				</div>
+				<div flex></div>
+			</div>-->
+		</template>
+		<script>
+			var demo = document.querySelector('#demo');
+			demo.curDate = moment();
 
-		<h1>Month Calendar</h1>
-		<calendar-month flex curDate="2015-02-07"></calendar-month>
+			demo.monthHeader = true;
+			demo.weekHeader = true;
+			demo.dayHeader = 'full';
+
+			demo.events = [];
+
+			demo.title = 'new event';
+			demo.venue = 'the office';
+			demo.startDate = moment().format('YYYY-MM-DD');
+			demo.startTime = moment().format('HH:mm');
+			demo.endDate = demo.startDate;
+			demo.endTime = moment(demo.StartTime).add(1, 'h').format('HH:mm');
+
+			demo.addEvent = function() {
+				demo.events.push({
+					title:	demo.title,
+					start:	moment(demo.startDate + ' ' + demo.startTime),
+					end:		moment(demo.endDate + ' ' + demo.endTime),
+					venue:  demo.venue
+				});
+			}
+
+			demo.formatDate = function(date) {
+				return moment(date).format('ll');
+			}
+
+			demo.removeEvents = function() {
+				demo.events = [];
+			}
 
 
 
+		</script>
 	</body>
 </html>
