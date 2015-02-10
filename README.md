@@ -24,37 +24,45 @@ Or [download as ZIP](https://github.com/JoppeSchwartz/event-calendar/archive/mas
     <script src="bower_components/webcomponentsjs/webcomponents.min.js"></script>
     ```
 
-2. Import one or more Custom Elements: 
+2. Import the event-calendar component:
 
     ```html
-    <link rel="import" href="bower_components/event-calendar/dist/calendar-month.html">
-    ```
-
-    ```html
-    <link rel="import" href="bower_components/event-calendar/dist/calendar-week.html">
-    ```
-
-    ```html
-    <link rel="import" href="bower_components/event-calendar/dist/calendar-day.html">
+    <link rel="import" href="bower_components/event-calendar/dist/event-calendar.html">
     ```
 
 3. Start using it!
 
     ```html
-    <calendar-month curDate="2015-2-10"></calendar-month>
+    <calendar-month curDate="2015-2-10" header view="month"></calendar-month>
     ```
 
 ## Options
 
 Attribute     | Options     | Default      | Description
 ---           | ---         | ---          | ---
-`foo`         | *string*    | `bar`        | Lorem ipsum dolor.
+`curDate`     | *string*    | today        | Current date for the calendar; it should be a Moment object or Moment-compatible string (see below)
+`header`			| [none]			| [none]			 | If present, the calendar will display a header
+`view`				| "month", "week", "day", "list" | "month" | Controls which view the calendar displays
+`startHour`	  | *integer*   |	0 (midnight) | The starting hour of each day to display in week and day views
+`events`      | *array*     | []           | Array of events to display on the calendar (see below) 
 
-## Methods
 
-Method        | Parameters   | Returns     | Description
----           | ---          | ---         | ---
-`unicorn()`   | None.        | Nothing.    | Magic stuff appears.
+## Dates and Moments
+This component uses the [Moment](http://momentjs.com/) library to handle dates and times. Therefore, the `curDate` attribute and the dates and times associated with events are represented as Moment objects. When passing date and time values in, one should construct a moment instance to do so. E.g., if one has a string date, pass `moment(datestring)`.
+
+## Events to Display
+To display events, set the 'events' attribute to an array of objects, each of which has the following form:
+
+	```javascript
+	{
+		start: [Moment],
+		end:   [Moment],
+		title: [string],
+		venue: [string]
+	}
+	```
+As with `curDate`, the `start` and `end` members must be Moment objects or compatible . 
+
 
 ## Events
 
