@@ -53,7 +53,7 @@ This component uses the [Moment](http://momentjs.com/) library to handle dates a
 ## Displaying Events
 To display events, set the 'events' attribute to an array of objects, each of which has the following form:
 
-```JSON
+```javascript
 {
     start: [Moment],
     end:   [Moment],
