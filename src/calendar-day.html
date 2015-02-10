@@ -1,23 +1,32 @@
-<link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../core-icon-button/core-icon-button.html">
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/core-icon-button/core-icon-button.html">
+<link rel="import" href="./calendar-day-base.html">
+<script src="../bower_components/moment/min/moment.min.js"></script>
 
-<polymer-element name="calendar-day" attributes="events date startHour showHeader">
+<polymer-element name="calendar-day" attributes="events date startHour header scroll nohours" extends="calendar-day-base" layout vertical>
 	<template>
 		<style>
 			:host, calendar-day {
-				min-width: 150px;
-				overflow-y: scroll;
+				display: block;
+				height: 100%;
 			}
-			div[header] {
-				background-color: #660000;
-				color: #FFFFCC;
+			.header {
+				background-color: grey;
+				color: white;
 				text-align: center;
 			}
-			div[backgroundGrid] {
+			.scroll {
+				overflow-y: scroll;
+			}
+			.noscroll {
+				overflow-y: hidden;
+			}
+			.backgroundGrid {
 				border: 1px solid lightgrey;
 				text-align: right;
+				min-height: 22px;
 			}
-			div[event] {
+			.event {
 				border: 2px solid darkgrey;
 				background-color: #FFFF99;
 				top: 0;
@@ -28,40 +37,50 @@
 			div[spacer] {
 				color: transparent;
 			}
-
 		</style>
-
-		<template if="{{showHeader}}">
-			<div header layout horizontal center center-justified>
+		<template if="{{header != null}}">
+			<div class="header" layout horizontal center center-justified>
 				<core-icon-button icon="chevron-left" on-tap="{{dayBack}}"></core-icon-button>
-				<div header>{{date | formatDate}}</div>
+				<div header>{{date | formatHeader}}</div>
 				<core-icon-button icon="chevron-right" on-tap="{{dayForward}}"></core-icon-button>
 			</div>
 		</template>
-		<div layout horizontal flex>
-			<div vertical layout flex>
-				<template repeat="{{hour in hours}}">
-					<div flex id="gridRow{{hour.value}}" backgroundGrid></div>
-				</template>
-			</div>
-			<div vertical layout>
-				<template repeat="{{hour in hours}}">
-					<div id="hour{{hour.value}}" backgroundGrid>{{hour.label}}</div>
-					</template >
+		<div flex vertical layout class="{{(scroll != null) ? 'scroll' : 'noscroll'}}" relative>
+			<div layout horizontal flex>
+				<!-- Grid rows -->
+				<div vertical layout flex relative>
+					<template repeat="{{hour in hours}}">
+						<div flex id="gridRow{{hour.value}}" class="backgroundGrid"></div>
+					</template>
+					<!-- This next div fits itself to the nearest relative containing
+					div, so it overlaps this section of the background grid and not the
+					hours legend. -->
+					<div fit>
+						<div layout horizontal>
+							<template repeat="{{event, eventIdx in myEvents}}">
+								<!-- Style each event to offset its top and set its height
+								appropriately. -->
+								<div flex id="event{{eventIdx}}" class="event" style="{{event | eventStyle | styleObject }}" on-tap="{{eventTapped}}"><b>{{event.title}}</b> {{event | formatTimes}}</div>
+							</template>
+						</div>
+					</div>
+				</div>
+				<!-- Hours legend -->
+				<div vertical layout hidden?="{{ nohours != null}}">
+					<template repeat="{{hour in hours}}">
+						<div flex id="hour{{hour.value}}" class="backgroundGrid">{{hour.label}}</div>
+					</template>
 				</div>
 			</div>
+
 		</div>
-		<div layout horizontal flex eventlayout>
-			<template repeat="{{event, eventIdx in eventsForDate(events, date) }}">
-				<div flex event id="event{{eventIdx}}" style="{{event | eventStyle | styleObject }}">{{event.venue.name}}</div>
-			</template>
-			<div spacer>25pm</div>
-		</div>		
 	</template>
 	<script>
 		Polymer({
-			startHour: 0,
-			date: moment(), 
+			created: function() {
+				this.startHour = 0;
+				this.date = moment(); 
+			},
 			ready: function() {
 				this.hours = [];
 				var m = moment();
@@ -70,51 +89,51 @@
 					this.hours.push({value: i, label: m.format('ha') });
 				}
 			},
-			formatDate: function(date) {
-				if (date) return date.format('ddd, MMM D').toUpperCase();
+			formatHeader: function(date) {
+				if (date) {
+					return date.format('ddd, MMM D').toUpperCase();
+				}
 			},
+			formatTimes: function(event) {
+				if (event)
+					return event.start.format('h:mm') + '-' + event.end.format('h:mm');
+			},
+			/*  Compute the top and height of the event element. The top is, for
+					now, equal to the top of the sdtarting hour's row. The heigh, for
+					now, is equal to the vertical distance from from the top of the
+					starting hour's row to the bottom of the ending hour's row.  */
+			/*	TODO:	reflect fractional hours in start/end */
 			eventStyle: function(event) {
-				/*  Compute the height of the event element: for now, equal to the
-						vertical distance from from the top of the starting hour's row to
-						the bottom of the ending hour's row.
-						TODO: reflect fractional hours in start/end
-				 */
+
 				var start = moment(event.start);
 				var end = moment(event.end);
 				var topHour = start.hour();
 				if (topHour < this.startHour) topHour = this.startHour;
 				var botHour = end.hour();
-				var lastDiv = this.shadowRoot.querySelector('#hour23');
 
-				var top = this.shadowRoot.querySelector('#hour' + topHour).offsetTop;
-				var botDiv;
+				/* ISSUE: Sometimes this callback gets called before the framework has
+					 prepared the DOM. In that instance, return immediately. To be
+					 investigated. It may derive from overeager recalculating of
+					 myEvents in calendar-day-base.  */
+				var topRow = this.shadowRoot.querySelector('#gridRow' + topHour);
+				if (!topRow) 
+					return;
+				
+				var top = topRow.offsetTop;
+
+				var botRow;
+				/* TODO: make variable last div to support 24-hour days starting at
+				arbitrary hours.*/
+				var lastDiv = this.shadowRoot.querySelector('#gridRow23');
 				if (start.isSame(end, 'd')) {
-					botDiv = this.shadowRoot.querySelector('#hour' + botHour);
+					botRow = this.shadowRoot.querySelector('#gridRow' + botHour);
 				}
 				else {
-					botDiv = lastDiv;
+					botRow = lastDiv;
 				}
-				var bot = botDiv.offsetTop + botDiv.offsetHeight;
+				var bot = botRow.offsetTop + botRow.offsetHeight;
 				var height = bot - top;
-				/*	Since this is a relatively positioned element, compute an offset
-						that will move it up by the distance from the top of the starting
-						hour row to the bottom of the bottom of the last row, where it
-						naturally would be positioned otherwise.
-				 */
-				var topOffset = top - (lastDiv.offsetTop + lastDiv.offsetHeight);
-				var left = 0;
-				return { top: topOffset + 'px', height: height + 'px', left: left + 'px' };
-			},
-			eventsForDate: function(events, date) {
-				//console.log('events for date called with events ' + events + ' date ' + date);
-				if (!events || events.length < 1)
-					return [];
-				var ar = (function(d) { 
-					return events.filter(function(el, idx, ar) {
-						return moment(el.start).isSame(d, 'd');
-					});
-				})(date);
-				return ar;
+				return { top: top + 'px', height: height + 'px' };
 			},
 			dayBack: function() {
 				// This syntax, by assigning a new object to the bound property, forces
@@ -123,32 +142,13 @@
 			},
 			dayForward: function() {
 				this.date = moment(this.date).add(1, 'd');
+			},
+			// TODO: make this event useful.
+			eventTapped: function(event, detail, sender) {
+				this.fire('event-tapped', sender);
 			}
 		});
 	</script>
 </polymer-element>
 
-<polymer-element name="calendar-days" attributes="startDate daysToShow events" horizontal layout>
-	<template>
-		<style>
-			div[aDay] {
-				border: 1px solid #330033;
-			}
-		</style>
-		<template repeat="{{day in days}}">
-			<div flex layout vertical aDay>
-				<calendar-day flex date="{{day}}" events="{{events}}" startHour="12" showHeader="true"></calendar-day>
-			</div>
-		</template>
-	</template>
-	<script>
-		Polymer( {
-			ready: function() {
-				this.days = [];
-				for (i = 0; i < this.daysToShow; i++) {
-					this.days.push(moment(this.startDate).startOf('d').add(i, 'd'));
-				}
-			}
-		});
-	</script>
-</polymer-element>
+

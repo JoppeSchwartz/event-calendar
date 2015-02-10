@@ -1,0 +1,50 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+
+<polymer-element name="event-list" attributes="events header">
+	<template>
+		<style>
+			.eventList {
+				overflow: scroll;
+			}
+			.eventListItem {
+				background-color: white;
+				color: dimgray;
+				border-bottom: 1px solid lightslategrey;
+				padding-bottom: 15px;
+				text-align: center;
+			}
+			.eventDate {
+				font-weight: bold;
+			}
+			.header {
+				background-color: grey;
+				color: white;
+			}
+		</style>
+		<template if="{{header != null}}">
+			<div layout center center-justified class="header">Event List</div>
+		</template>
+		<div layout vertical class="eventList">
+			<template repeat="{{event in events}}">
+				<div class="eventListItem" layout horizontal around-justified on-tap="{{eventListItemTapped}}">
+					<div class="eventDate">{{formatEventDate(event)}}</div>
+					<div >{{formatEventTimes(event)}}</div>
+					<div>{{event.title}}</div>
+					<div>{{event.venue}}</div>
+				</div>
+			</template>
+		</div>
+	</template>
+	<script>
+		Polymer({
+			formatEventDate: function(event) {
+				return moment(event.start).format('ddd, MMM D');
+			},
+			formatEventTimes: function(event) {
+				return moment(event.start).format('h:mma') + ' to ' + moment(event.end).format('h:mma');
+			}
+		});
+	</script>
+</polymer-element>
+

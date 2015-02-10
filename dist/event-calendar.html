@@ -1,29 +1,89 @@
 <!-- Import Polymer -->
 <link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../core-pages/core-pages.html">
+<link rel="import" href="../../core-icon-button/core-icon-button.html">
+<link rel="import" href="./calendar-month.html">
+<link rel="import" href="./calendar-week.html">
+<link rel="import" href="./calendar-day.html">
+<link rel="import" href="./event-list.html">
 
-<!-- Define your custom element -->
-<polymer-element name="event-calendar">
+<!-- Container element for all calendar views -->
+<polymer-element name="event-calendar" attributes="curDate events header startHour view" layout vertical>
+<style>
+	:host, event-calendar {
+		display: block;
+		height: 100%;
+	}
+	core-pages {
+		height: 100%;
+		display: block;
+	}
+	</style>
+	<template>
+		<template if="{{header != null}}">
+			<div horizontal layout class="header">
+				<core-icon-button icon="apps" active?="{{view == 'month'}}" value="month" on-tap="{{viewButtonTapped}}"></core-icon-button>
+				<core-icon-button icon="view-week" active?="{{view == 'week'}}" value="week" on-tap="{{viewButtonTapped}}"></core-icon-button>
+				<core-icon-button icon="view-day" active?="{{view == 'day'}}" value="day" on-tap="{{viewButtonTapped}}"></core-icon-button>
+				<core-icon-button icon="view-list" active?="{{view == 'list'}}" value="list" on-tap="{{viewButtonTapped}}"></core-icon-button>
+			</div>
+		</template>
+		<core-pages flex selected="{{viewPage[view]}}">
+			<calendar-month curDate="{{curDate}}" events="{{events}}" header="{{header}}"></calendar-month>
+			<calendar-week flex curDate="{{curDate}}" events="{{events}}" header="{{header}}" startHour="{{startHour}}"></calendar-week>
+			<calendar-day date="{{curDate}}" events="{{events}}" header="{{header}}" scroll startHour="{{startHour}}"></calendar-day>
+			<event-list events="{{events}}" header="{{header}}"></event-list>
+		</core-pages>
+	</template>
+	<script>
+		Polymer('event-calendar', {
+			// Fires when an instance of the element is created
+			created: function() {
+				this.events = [];
+				this.viewPage = {
+					'month' : 0,
+					'week'	: 1,
+					'day'		: 2,
+					'list'	: 3 
+				};
+				this.view = 'month';
+			},
+			eventsChanged: function() {
+				// Validate events
+				for (var i = 0; i < this.events.length; i++) {
+					var ev = this.events[i];
+					// Each events must have a start & stop.
+					if (!ev.start || !ev.end) 
+						this.fire('event-calendar-error', 'Each event must have a start and end.');
+					// Make sure each start and stop is a moment or moment-compatible.
+					if (!moment.isMoment(ev.start))
+						ev.start = moment(ev.start);
+					if (!moment.isMoment(ev.end))
+						ev.end = moment(ev.end);
+					// Ensure the start < end.
+					if (ev.end < ev.start) 
+						this.fire('event-calendar-error', 'event.start must precede event.end');
+				}
+			},
 
-    <script>
-        Polymer('event-calendar', {
-            // Fires when an instance of the element is created
-            created: function() {},
+			// Fires when the "<polymer-element>" has been fully prepared
+			ready: function() {},
+			viewButtonTapped: function(event, detail, sender) {
+				this.view = sender.getAttribute('value');
+				return;
+			},
+			// Fires when the element’s initial set of children and siblings are guaranteed to exist
+			domReady: function() {},
 
-            // Fires when the "<polymer-element>" has been fully prepared
-            ready: function() {},
+			// Fires when the element was inserted into the document
+			attached: function() {},
 
-            // Fires when the element’s initial set of children and siblings are guaranteed to exist
-            domReady: function() {},
+			// Fires when the element was removed from the document
+			detached: function() {},
 
-            // Fires when the element was inserted into the document
-            attached: function() {},
-
-            // Fires when the element was removed from the document
-            detached: function() {},
-
-            // Fires when an attribute was added, removed, or updated
-            attributeChanged: function(attr, oldVal, newVal) {}
-        });
-    </script>
+			// Fires when an attribute was added, removed, or updated
+			attributeChanged: function(attr, oldVal, newVal) {}
+		});
+	</script>
 
 </polymer-element>
