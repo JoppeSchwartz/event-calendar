@@ -53,14 +53,14 @@ This component uses the [Moment](http://momentjs.com/) library to handle dates a
 ## Displaying Events
 To display events, set the 'events' attribute to an array of objects, each of which has the following form:
 
-    ```JSON
-    {
-        start: [Moment],
-        end:   [Moment],
-        title: [string],
-        venue: [string]
-    }
-    ```
+```JSON
+{
+    start: [Moment],
+    end:   [Moment],
+    title: [string],
+    venue: [string]
+}
+```
 As with `curDate`, the `start` and `end` members must be Moment objects or compatible . 
 
 
