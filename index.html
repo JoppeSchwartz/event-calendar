@@ -25,7 +25,10 @@
 		</style>
 	</head>
 	<body fullbleed layout vertical>
-		<h1>event-calendar demo</h1>
+		<div layout horizontal justified>
+			<h1>event-calendar demo</h1>
+			<h2><a href="https://github.com/JoppeSchwartz/event-calendar">project home</a></h2>
+		</div>
 		<template id="demo" is="auto-binding">
 			<div class="centered">header: <input type="checkbox" checked="{{monthHeader}}"> | current date: {{formatDate(curDate)}}</div>
 			<event-calendar flex curDate="{{curDate}}" events="{{events}}" header?="{{monthHeader}}" startHour="8" view="month"></event-calendar>

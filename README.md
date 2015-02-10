@@ -38,22 +38,22 @@ Or [download as ZIP](https://github.com/JoppeSchwartz/event-calendar/archive/mas
 
 ## Options
 
-Attribute     | Options     | Default      | Description
----           | ---         | ---          | ---
-`curDate`     | *string*    | today        | Current date for the calendar; it should be a Moment object or Moment-compatible string (see below)
-`header`			| [none]			| [none]			 | If present, the calendar will display a header
+Attribute     | Options     | Default          | Description
+---           | ---         | ---              | ---
+`curDate`     | *Moment*    | moment() [today] | Current date for the calendar; it should be a Moment object or Moment-compatible string (see below)
+`header`			| [none]			| [none]			     | If present, the calendar will display a header
 `view`				| "month", "week", "day", "list" | "month" | Controls which view the calendar displays
-`startHour`	  | *integer*   |	0 (midnight) | The starting hour of each day to display in week and day views
-`events`      | *array*     | []           | Array of events to display on the calendar (see below) 
+`startHour`	  | *integer*   |	0 (midnight)     | The starting hour of each day to display in week and day views
+`events`      | *array*     | []               | Array of events to display on the calendar (see below) 
 
 
 ## Dates and Moments
 This component uses the [Moment](http://momentjs.com/) library to handle dates and times. Therefore, the `curDate` attribute and the dates and times associated with events are represented as Moment objects. When passing date and time values in, one should construct a moment instance to do so. E.g., if one has a string date, pass `moment(datestring)`.
 
-## Events to Display
+## Displaying Events
 To display events, set the 'events' attribute to an array of objects, each of which has the following form:
 
-	```javascript
+	```JavaScript
 	{
 		start: [Moment],
 		end:   [Moment],
@@ -66,9 +66,9 @@ As with `curDate`, the `start` and `end` members must be Moment objects or compa
 
 ## Events
 
-Event         | Description
----           | ---
-`onsomething` | Triggers when something happens.
+Event                  | Description
+---                    | ---
+`event-calendar-error` | Triggers when an malformed event is passed to the calendar
 
 ## Development
 
