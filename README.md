@@ -91,7 +91,7 @@ In order to run it locally you'll need to fetch some dependencies and a basic se
     ```sh
     $ grunt server
     ```
-This should open a browser displaying the demo page at address `http://localhost:8000`. To run unit tests, open `http://localhost:8000/test/index.html`.
+This should open a browser displaying the demo page at address `http://localhost:8000`. To run the unit tests, open `http://localhost:8000/test/index.html`.
 
 * To build the distribution files before releasing a new version.
 
