@@ -41,7 +41,7 @@
 				</div>
 				<div flex></div>
 			</div>
-			<event-calendar flex curDate="{{curDate}}" events="{{events}}" header?="{{header}}" startHour="8" view="month"></event-calendar>
+			<event-calendar flex curDate="{{curDate}}" events="{{events}}" header?="{{header}}" startHour="8" view="month" on-event-calendar-error="{{eventCalendarError}}"></event-calendar>
 		</div>
 		<paper-action-dialog id="addEventDialog" heading="add event">
 			<div horizontal layout end> 
@@ -104,6 +104,12 @@
 
 		demo.removeEvents = function() {
 			demo.events = [];
+		}
+
+		demo.eventCalendarError = function(event, detail, sender) {
+			var errMsg = 'Event calendar error: ' + detail;
+			console.error(errMsg);
+			alert(errMsg);
 		}
 
 	</script>
