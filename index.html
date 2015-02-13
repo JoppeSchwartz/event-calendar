@@ -12,9 +12,6 @@
 
 		<!-- Importing Custom Elements -->
 		<link rel="import" href="src/event-calendar.html">
-		<link rel="import" href="src/calendar-month.html">
-		<link rel="import" href="src/calendar-week.html">
-		<link rel="import" href="src/calendar-day.html">
 		<style>
 			body {
 				font-family: Gill Sans MT, Gill Sans, Calibri, sans-serif;
@@ -30,8 +27,8 @@
 			<h2><a href="https://github.com/JoppeSchwartz/event-calendar">project home</a></h2>
 		</div>
 		<template id="demo" is="auto-binding">
-			<div class="centered">header: <input type="checkbox" checked="{{monthHeader}}"> | current date: {{formatDate(curDate)}}</div>
-			<event-calendar flex curDate="{{curDate}}" events="{{events}}" header?="{{monthHeader}}" startHour="8" view="month"></event-calendar>
+			<div class="centered">header: <input type="checkbox" checked="{{header}}"> | current date: {{formatDate(curDate)}}</div>
+			<event-calendar flex curDate="{{curDate}}" events="{{events}}" header?="{{header}}" startHour="8" view="month"></event-calendar>
 			<div horizontal layout center-justified>
 				<div>
 					<h2>add events</h2>
@@ -68,9 +65,7 @@
 			var demo = document.querySelector('#demo');
 			demo.curDate = moment();
 
-			demo.monthHeader = true;
-			demo.weekHeader = true;
-			demo.dayHeader = 'full';
+			demo.header = true;
 
 			demo.events = [];
 
@@ -97,8 +92,6 @@
 			demo.removeEvents = function() {
 				demo.events = [];
 			}
-
-
 
 		</script>
 	</body>

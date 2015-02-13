@@ -1,6 +1,6 @@
 # &lt;event-calendar&gt;
 
-> Custom calendar polymer components with support for events display.
+> Custom calendar polymer component with support for events display. Supports monthly, weekly, daily, and list views.
 
 ## Demo
 
@@ -50,8 +50,8 @@ Attribute     | Options     | Default          | Description
 ## Dates and Moments
 This component uses the [Moment](http://momentjs.com/) library to handle dates and times. Therefore, the `curDate` attribute and the dates and times associated with events are represented as Moment objects. When passing date and time values in, one should construct a moment instance to do so. E.g., if one has a string date, pass `moment(datestring)`.
 
-## Displaying Events
-To display events, set the 'events' attribute to an array of objects, each of which has the following form:
+## Displaying Calendar Events
+To display events, set the `events` attribute to an array of objects, each of which has the following form:
 
 ```javascript
 {
@@ -64,11 +64,11 @@ To display events, set the 'events' attribute to an array of objects, each of wh
 As with `curDate`, the `start` and `end` members must be Moment objects or compatible . 
 
 
-## Events
+## DOM Events
 
 Event                  | Description
 ---                    | ---
-`event-calendar-error` | Triggers when an malformed event is passed to the calendar
+`event-calendar-error` | Fires when an malformed event is passed to the calendar
 
 ## Development
 
@@ -86,11 +86,12 @@ In order to run it locally you'll need to fetch some dependencies and a basic se
     $ bower install && npm install
     ```
 
-* To test your project, start the development server and open `http://localhost:8000`.
+* To test your project, start the development server.
 
     ```sh
     $ grunt server
     ```
+This should open a browser displaying the demo page at address `http://localhost:8000`. To run the unit tests, open `http://localhost:8000/test/index.html`.
 
 * To build the distribution files before releasing a new version.
 
