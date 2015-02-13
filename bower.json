@@ -20,5 +20,8 @@
     "core-icon-button": "Polymer/core-icon-button#~0.5.4",
     "moment": "~2.9.0",
     "core-pages": "Polymer/core-pages#~0.5.4"
-  }
+  },
+	"devDependencies": {
+    "web-component-tester": "~2.2.3"
+	}
 }

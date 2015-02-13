@@ -1,0 +1,138 @@
+<!--
+@license
+Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+		<title>seed-element</title>
+
+		<script src="../bower_components/webcomponentsjs/webcomponents.min.js"></script>
+		<script src="../bower_components/web-component-tester/browser.js"></script>
+
+		<!-- Step 1: import the element to test -->
+		<link rel="import" href="../src/event-calendar.html">
+	</head>
+	<body>
+
+		<!-- You use the document as a place to set up your fixtures. -->
+		<event-calendar id="eventCal"></event-calendar>
+
+		<script>
+			var myCal = document.querySelector('#eventCal');
+			suite('validate defaults', function() {
+				test('current date defaults to today', function() {
+					expect(myCal.curDate).to.be.a('Object');
+					assert(myCal.curDate.isSame(moment(), 'd'));
+				});
+				test('defaults to month view', function() {
+					assert.equal(myCal.view, 'month');
+				});
+				test('displays month view by default', function() {
+					var v = myCal.shadowRoot.querySelector('#monthView');
+					var selected = myCal.shadowRoot.querySelector('.core-selected');
+					assert(myCal.shadowRoot.querySelector('calendar-month').classList.contains('core-selected'));
+					assert(!myCal.shadowRoot.querySelector('calendar-week').classList.contains('core-selected'));
+					assert(!myCal.shadowRoot.querySelector('calendar-day').classList.contains('core-selected'));
+					assert(!myCal.shadowRoot.querySelector('event-list').classList.contains('core-selected'));
+				});
+				test('defaults to no header', function() {
+					assert.isUndefined(myCal.header);
+				});
+				test('can toggle header', function(done) {
+					myCal.header = '';
+					flush(function() {
+						var h = myCal.shadowRoot.querySelector('.header');
+						assert.isNotNull(h);
+						myCal.header = null;
+						flush(function() {
+							var h = myCal.shadowRoot.querySelector('.header');
+							assert.isNull(h);
+							done();
+						});
+					});
+				});
+			});
+
+			suite('change views', function() {
+				// Make sure we begin and end with the month view (already validated as default)
+				suiteSetup(function() {
+					myCal.view = 'month';
+				});
+
+				suiteTeardown(function() {
+					myCal.view = 'month';
+				});
+
+				test('can set week view', function(done) {
+					myCal.view = 'week';
+					flush(function() {
+						assert(!myCal.shadowRoot.querySelector('calendar-month').classList.contains('core-selected'));
+						assert(myCal.shadowRoot.querySelector('calendar-week').classList.contains('core-selected'));
+						assert(!myCal.shadowRoot.querySelector('calendar-day').classList.contains('core-selected'));
+						assert(!myCal.shadowRoot.querySelector('event-list').classList.contains('core-selected'));
+						done();
+					});
+				});
+
+				test('can set day view', function(done) {
+					myCal.view = 'day';
+					flush(function() {
+						assert(!myCal.shadowRoot.querySelector('calendar-month').classList.contains('core-selected'));
+						assert(!myCal.shadowRoot.querySelector('calendar-week').classList.contains('core-selected'));
+						assert(myCal.shadowRoot.querySelector('calendar-day').classList.contains('core-selected'));
+						assert(!myCal.shadowRoot.querySelector('event-list').classList.contains('core-selected'));
+						done();
+					});
+				});
+
+				test('can set list view', function(done) {
+					myCal.view = 'list'; 
+					flush(function() {
+						assert(!myCal.shadowRoot.querySelector('calendar-month').classList.contains('core-selected'));
+						assert(!myCal.shadowRoot.querySelector('calendar-week').classList.contains('core-selected'));
+						assert(!myCal.shadowRoot.querySelector('calendar-day').classList.contains('core-selected'));
+						assert(myCal.shadowRoot.querySelector('event-list').classList.contains('core-selected'));
+						done();
+					});
+				});
+			});
+
+			suite('test events', function() {
+
+				suiteTeardown(function() {
+					myCal.events = [];
+				});
+
+				// TODO: add tests to verify event added in week view 
+				test('start with no events in month/week/day views', function() {
+					assert.isNull(myCal.shadowRoot.querySelector('calendar-month').shadowRoot.querySelector('.event'));
+					assert.isNull(myCal.shadowRoot.querySelector('calendar-day').shadowRoot.querySelector('.event'));
+				});
+				test('can add an event', function(done) {
+					var ev = {
+						start: moment(),
+						end: moment().add(2, 'h'),
+						title: 'my test event',
+						venue: 'the office'
+					};
+					myCal.events = [ev];
+					flush(function() {
+						assert.isNotNull(myCal.shadowRoot.querySelector('calendar-day').shadowRoot.querySelector('.event'));
+						assert.isNotNull(myCal.shadowRoot.querySelector('calendar-day').shadowRoot.querySelector('.event'));
+						done();
+					});
+				});
+			});
+
+		</script>
+
+	</body>
+</html>
