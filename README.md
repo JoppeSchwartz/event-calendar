@@ -70,6 +70,21 @@ Event                  | Description
 ---                    | ---
 `event-calendar-error` | Fires when an malformed event is passed to the calendar
 
+## Styling the calendar
+The calendar may be styled using the usual Polymer CSS helpers like `/deep/`. For instance, you can format the header as follows:
+```css
+event-calendar /deep/ .header {
+	background-color: #330033;
+	color: #ffffcc;
+}
+```
+and change the color of the current day in the month view like so:
+
+```css
+event-calendar /deep/ .dayBoxToday {
+	background-color: #ffffcc;
+}
+```
 ## Development
 
 In order to run it locally you'll need to fetch some dependencies and a basic server setup.
