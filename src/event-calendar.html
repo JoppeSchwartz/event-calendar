@@ -29,7 +29,7 @@
 			</div>
 		</template>
 		<core-pages flex selected="{{viewPage[view]}}">
-			<calendar-month curDate="{{curDate}}" events="{{events}}" header="{{header}}"></calendar-month>
+			<calendar-month id="monthView" curDate="{{curDate}}" events="{{events}}" header="{{header}}"></calendar-month>
 			<calendar-week flex curDate="{{curDate}}" events="{{events}}" header="{{header}}" startHour="{{startHour}}"></calendar-week>
 			<calendar-day date="{{curDate}}" events="{{events}}" header="{{header}}" scroll startHour="{{startHour}}"></calendar-day>
 			<event-list events="{{events}}" header="{{header}}"></event-list>
