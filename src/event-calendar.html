@@ -29,7 +29,7 @@
 			</div>
 		</template>
 		<core-pages flex selected="{{viewPage[view]}}">
-			<calendar-month id="monthView" curDate="{{curDate}}" events="{{events}}" header="{{header}}"></calendar-month>
+			<calendar-month curDate="{{curDate}}" events="{{events}}" header="{{header}}"></calendar-month>
 			<calendar-week flex curDate="{{curDate}}" events="{{events}}" header="{{header}}" startHour="{{startHour}}"></calendar-week>
 			<calendar-day date="{{curDate}}" events="{{events}}" header="{{header}}" scroll startHour="{{startHour}}"></calendar-day>
 			<event-list events="{{events}}" header="{{header}}"></event-list>
@@ -49,20 +49,31 @@
 				this.view = 'month';
 			},
 			eventsChanged: function() {
-				// Validate events
+				// Validate events (N.B. stops on first invalid event)
 				for (var i = 0; i < this.events.length; i++) {
 					var ev = this.events[i];
 					// Each events must have a start & stop.
-					if (!ev.start || !ev.end) 
-						this.fire('event-calendar-error', 'Each event must have a start and end.');
+					if (!ev.start || !ev.end) {
+						this.asyncFire('event-calendar-error', 'Each event must have a start and end.');
+						this.async(function() {
+							this.events.splice(i, 1);
+						});
+						break;
+					}
 					// Make sure each start and stop is a moment or moment-compatible.
 					if (!moment.isMoment(ev.start))
 						ev.start = moment(ev.start);
 					if (!moment.isMoment(ev.end))
 						ev.end = moment(ev.end);
 					// Ensure the start < end.
-					if (ev.end < ev.start) 
-						this.fire('event-calendar-error', 'event.start must precede event.end');
+					if (ev.end < ev.start) {
+						this.asyncFire('event-calendar-error', 'event.start must precede event.end');
+						this.async(function() {
+							debugger;
+							this.events.splice(i, 1);
+						}, i);
+						break;
+					}
 				}
 			},
 
