@@ -69,7 +69,6 @@
 					if (ev.end < ev.start) {
 						this.asyncFire('event-calendar-error', 'event.start must precede event.end');
 						this.async(function() {
-							debugger;
 							this.events.splice(i, 1);
 						}, i);
 						break;
