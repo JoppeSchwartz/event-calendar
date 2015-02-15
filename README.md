@@ -85,6 +85,20 @@ event-calendar /deep/ .dayBoxToday {
 	background-color: #ffffcc;
 }
 ```
+
+The currently supported style classes are:
+CSS Class					| Description
+---								| ---
+`header`					| header for the entire calendar and month view
+`month-header`		| header for month view
+`week-header`			| header for week view
+`day header`			| header for day view
+`dayBoxToday`			| cell for today in the month view
+`dayBoxCurrent`   | cell for the currently selected date in month view
+`event`						| event display style
+
+If you want more fine-grained control over style, you can reference classes and elements within specific calendar views, e.g. `calendar-month /deep/ event`.
+
 ## Development
 
 In order to run it locally you'll need to fetch some dependencies and a basic server setup.
