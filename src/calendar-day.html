@@ -10,7 +10,7 @@
 				display: block;
 				height: 100%;
 			}
-			.header {
+			.dayHeader {
 				background-color: grey;
 				color: white;
 				text-align: center;
@@ -39,9 +39,9 @@
 			}
 		</style>
 		<template if="{{header != null}}">
-			<div class="header" layout horizontal center center-justified>
+			<div class="dayHeader" layout horizontal center center-justified>
 				<core-icon-button icon="chevron-left" on-tap="{{dayBack}}"></core-icon-button>
-				<div header>{{date | formatHeader}}</div>
+				<div>{{date | formatHeader}}</div>
 				<core-icon-button icon="chevron-right" on-tap="{{dayForward}}"></core-icon-button>
 			</div>
 		</template>

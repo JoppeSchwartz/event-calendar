@@ -55,7 +55,7 @@
 				display: block;
 				height: 100%;
 			}
-			.header {
+			.monthHeader {
 				background-color: grey; 
 				color: white;
 			}
@@ -73,7 +73,7 @@
 			}
 		</style>
 		<template if="{{header != null}}">
-			<div horizontal layout center center-justified class="header">
+			<div horizontal layout center center-justified class="monthHeader">
 				<div flex></div>
 				<core-icon-button icon="chevron-left" on-tap="{{monthBack}}"></core-icon-button>
 				<div>{{formatMonth(curDate)}}</div>

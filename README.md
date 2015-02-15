@@ -90,9 +90,9 @@ The currently supported style classes are:
 CSS Class					| Description
 ---								| ---
 `header`					| header for the entire calendar and month view
-`month-header`		| header for month view
-`week-header`			| header for week view
-`day header`			| header for day view
+`monthHeader`		| header for month view
+`weekHeader`			| header for week view
+`dayHeader`			| header for day view
 `dayBoxToday`			| cell for today in the month view
 `dayBoxCurrent`   | cell for the currently selected date in month view
 `event`						| event display style
