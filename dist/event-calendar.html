@@ -73,7 +73,7 @@
 			</template>
 		</template>
 		<core-pages flex selected="{{viewPage[view]}}">
-			<calendar-month curDate="{{curDate}}" events="{{events}}" header="{{header}}"></calendar-month>
+			<calendar-month id="calMonth" curDate="{{curDate}}" events="{{events}}" header="{{header}}"></calendar-month>
 			<calendar-week id="calWeek" flex curDate="{{curDate}}" events="{{events}}" header="{{header}}" startHour="{{startHour}}"></calendar-week>
 			<calendar-day date="{{curDate}}" events="{{events}}" header="{{header}}" scroll startHour="{{startHour}}"></calendar-day>
 			<event-list events="{{events}}" header="{{header}}"></event-list>
@@ -163,6 +163,19 @@
 			},
 			dayForward: function() {
 				this.curDate = moment(this.curDate).add(1, 'day');
+			},
+			// Query functions
+			firstDateInMonthView: function() {
+				return this.$.calMonth.firstDateInCalendar;
+			},
+			lastDateInMonthView: function() {
+				return this.$.calMonth.lastDateInCalendar;
+			},
+			firstDateInWeekView: function() {
+				return this.$.calWeek.days[0];
+			},
+			lastDateInWeekView: function() {
+				return this.$.calWeek.days[6];
 			}
 		});
 	</script>
