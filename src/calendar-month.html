@@ -48,16 +48,12 @@
 </polymer-element>
 
 
-<polymer-element name="calendar-month" attributes="curDate events header" on-day-selected="{{daySelected}}" vertical layout>
+<polymer-element name="calendar-month" attributes="curDate events" on-day-selected="{{daySelected}}" vertical layout>
 	<template>
 		<style> 
 			:host {
 				display: block;
 				height: 100%;
-			}
-			.monthHeader {
-				background-color: grey; 
-				color: white;
 			}
 			.dayBox {
 				border: solid black 1px;
@@ -72,16 +68,6 @@
 				border: 2px solid black;
 			}
 		</style>
-		<template if="{{header != null}}">
-			<div horizontal layout center center-justified class="monthHeader">
-				<div flex></div>
-				<core-icon-button icon="chevron-left" on-tap="{{monthBack}}"></core-icon-button>
-				<div>{{formatMonth(curDate)}}</div>
-				<core-icon-button icon="chevron-right" on-tap="{{monthForward}}"></core-icon-button>
-				<div flex></div>
-				<core-icon-button icon="today" on-tap="{{todayTapped}}"></core-icon-button>
-			</div>
-		</template>
 		<template repeat="{{week in weeks}}">
 			<div horizontal layout flex>
 				<template repeat="{{day in weekDays}}">
@@ -138,12 +124,6 @@
 			dateForWeekDay: function(week, day) {
 				return this.firstDateInWeek(week).add(day, 'd');
 			},
-			monthBack: function() {
-				this.curDate = moment(this.curDate).subtract(1, 'month');
-			},
-			monthForward: function() {
-				this.curDate = moment(this.curDate).add(1, 'month');
-			},
 			curDateChanged: function(oldDate, newDate) {
 				// Ensure that curDate is a moment object
 				if (!moment.isMoment(this.curDate))
@@ -155,9 +135,6 @@
 						}
 					}
 				});
-			},
-			todayTapped: function() {
-				this.curDate = moment();
 			},
 			dayBoxTapped: function(event, day, sender) {
 				this.curDate = moment(sender.date);

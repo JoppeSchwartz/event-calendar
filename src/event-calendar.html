@@ -9,28 +9,75 @@
 
 <!-- Container element for all calendar views -->
 <polymer-element name="event-calendar" attributes="curDate events header startHour view" layout vertical>
-<style>
-	:host, event-calendar {
-		display: block;
-		height: 100%;
-	}
-	core-pages {
-		height: 100%;
-		display: block;
-	}
+	<style>
+		:host, event-calendar {
+			display: block;
+			height: 100%;
+		}
+		core-pages {
+			height: 100%;
+			display: block;
+		}
+		event-calendar /deep/ .monthHeader, 
+		event-calendar /deep/ .weekHeader, 
+		event-calendar /deep/ .dayHeader, 
+		event-calendar /deep/ .listHeader {
+			background-color: grey; 
+			color: white;
+		}
+		.dayHeader {
+			background-color: grey;
+			color: white;
+			text-align: center;
+		}
 	</style>
 	<template>
+		<!-- Unified header -->
 		<template if="{{header != null}}">
-			<div horizontal layout class="header">
+			<div layout horizontal center justified class="{{view + 'Header'}}">
 				<core-icon-button icon="apps" active?="{{view == 'month'}}" value="month" on-tap="{{viewButtonTapped}}"></core-icon-button>
 				<core-icon-button icon="view-week" active?="{{view == 'week'}}" value="week" on-tap="{{viewButtonTapped}}"></core-icon-button>
 				<core-icon-button icon="view-day" active?="{{view == 'day'}}" value="day" on-tap="{{viewButtonTapped}}"></core-icon-button>
 				<core-icon-button icon="view-list" active?="{{view == 'list'}}" value="list" on-tap="{{viewButtonTapped}}"></core-icon-button>
+				<div flex></div>
+				<template if="{{view=='month'}}">
+					<core-icon-button icon="chevron-left" on-tap="{{monthBack}}"></core-icon-button>
+					<div>{{formatMonth(curDate)}}</div>
+					<core-icon-button icon="chevron-right" on-tap="{{monthForward}}"></core-icon-button>
+					<div flex></div>
+					<core-icon-button icon="today" on-tap="{{todayTapped}}"></core-icon-button>
+				</template>
+				<template if="{{view=='week'}}">
+					<core-icon-button icon="chevron-left" on-tap="{{weekBack}}"></core-icon-button>
+					<div>{{formatWeek($.calWeek.days)}}</div>
+					<core-icon-button icon="chevron-right" on-tap="{{weekForward}}"></core-icon-button>
+					<div flex></div>
+					<core-icon-button icon="today" on-tap="{{todayTapped}}"></core-icon-button>
+				</template>
+				<template if="{{view=='day'}}">
+					<core-icon-button icon="chevron-left" on-tap="{{dayBack}}"></core-icon-button>
+					<div>{{formatDate(curDate)}}</div>
+					<core-icon-button icon="chevron-right" on-tap="{{dayForward}}"></core-icon-button>
+					<div flex></div>
+					<core-icon-button icon="today" on-tap="{{todayTapped}}"></core-icon-button>
+				</template>
+				<template if="{{view=='list'}}">
+					<div layout center center-justified class="header">Event List</div>
+					<div flex></div>
+				</template>
 			</div>
+			<!-- secondary header for days in week view -->
+			<template if="{{view=='week'}}">
+				<div horizontal layout>
+					<template repeat="{{day, idx in $.calWeek.days}}">
+						<div flex class="dayHeader">{{formatDateInWeek(day)}}</div>
+					</template>
+				</div>
+			</template>
 		</template>
 		<core-pages flex selected="{{viewPage[view]}}">
 			<calendar-month curDate="{{curDate}}" events="{{events}}" header="{{header}}"></calendar-month>
-			<calendar-week flex curDate="{{curDate}}" events="{{events}}" header="{{header}}" startHour="{{startHour}}"></calendar-week>
+			<calendar-week id="calWeek" flex curDate="{{curDate}}" events="{{events}}" header="{{header}}" startHour="{{startHour}}"></calendar-week>
 			<calendar-day date="{{curDate}}" events="{{events}}" header="{{header}}" scroll startHour="{{startHour}}"></calendar-day>
 			<event-list events="{{events}}" header="{{header}}"></event-list>
 		</core-pages>
@@ -75,24 +122,48 @@
 					}
 				}
 			},
-
-			// Fires when the "<polymer-element>" has been fully prepared
-			ready: function() {},
+			formatMonth: function(date) {
+				return moment(date).format('MMM').toUpperCase();
+			},
+			formatWeek: function(days) {
+				if (!days || !days.length) return;
+				return days[0].format('M/D') + '-' + days[6].format('M/d');
+			},
+			formatDate: function(date) {
+				if (date) {
+					return date.format('ddd, MMM D').toUpperCase();
+				}
+			},
+			formatDateInWeek: function(date) {
+				if (date) return date.format('ddd M/D');
+			},
 			viewButtonTapped: function(event, detail, sender) {
 				this.view = sender.getAttribute('value');
 				return;
 			},
-			// Fires when the element’s initial set of children and siblings are guaranteed to exist
-			domReady: function() {},
-
-			// Fires when the element was inserted into the document
-			attached: function() {},
-
-			// Fires when the element was removed from the document
-			detached: function() {},
-
-			// Fires when an attribute was added, removed, or updated
-			attributeChanged: function(attr, oldVal, newVal) {}
+			todayTapped: function() {
+				this.curDate = moment();
+			},
+			monthBack: function() {
+				this.curDate = moment(this.curDate).subtract(1, 'month');
+			},
+			monthForward: function() {
+				this.curDate = moment(this.curDate).add(1, 'month');
+			},
+			weekBack: function() {
+				this.curDate = moment(this.curDate).subtract(1, 'week');
+			},
+			weekForward: function() {
+				this.curDate = moment(this.curDate).add(1, 'week');
+			},
+			dayBack: function() {
+				// This syntax, by assigning a new object to the bound property, forces
+				// updates and change events.
+				this.curDate = moment(this.curDate).subtract(1, 'day');
+			},
+			dayForward: function() {
+				this.curDate = moment(this.curDate).add(1, 'day');
+			}
 		});
 	</script>
 
