@@ -122,6 +122,7 @@
 					}
 				}
 			},
+			// Formatting functions to support header display
 			formatMonth: function(date) {
 				return moment(date).format('MMM').toUpperCase();
 			},
@@ -137,6 +138,7 @@
 			formatDateInWeek: function(date) {
 				if (date) return date.format('ddd M/D');
 			},
+			// Event handlers
 			viewButtonTapped: function(event, detail, sender) {
 				this.view = sender.getAttribute('value');
 				return;
@@ -144,6 +146,7 @@
 			todayTapped: function() {
 				this.curDate = moment();
 			},
+			// Date navigation
 			monthBack: function() {
 				this.curDate = moment(this.curDate).subtract(1, 'month');
 			},
