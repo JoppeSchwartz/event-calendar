@@ -89,10 +89,11 @@ event-calendar /deep/ .dayBoxToday {
 The currently supported style classes are:
 CSS Class					| Description
 ---								| ---
-`header`					| header for the entire calendar and month view
-`monthHeader`		| header for month view
+`header`					| header for all views; can be overridden with a view-specific class
+`monthHeader`			| header for month view
 `weekHeader`			| header for week view
-`dayHeader`			| header for day view
+`dayHeader`				| header for day view and days within week view
+`listHeader`			| header for list view 
 `dayBoxToday`			| cell for today in the month view
 `dayBoxCurrent`   | cell for the currently selected date in month view
 `event`						| event display style

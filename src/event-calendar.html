@@ -18,6 +18,7 @@
 			height: 100%;
 			display: block;
 		}
+		event-calendar /deep/ .header,
 		event-calendar /deep/ .monthHeader, 
 		event-calendar /deep/ .weekHeader, 
 		event-calendar /deep/ .dayHeader, 
@@ -25,16 +26,12 @@
 			background-color: grey; 
 			color: white;
 		}
-		.dayHeader {
-			background-color: grey;
-			color: white;
-			text-align: center;
-		}
+
 	</style>
 	<template>
 		<!-- Unified header -->
 		<template if="{{header != null}}">
-			<div layout horizontal center justified class="{{view + 'Header'}}">
+			<div layout horizontal center justified class="header {{view + 'Header'}}">
 				<core-icon-button icon="apps" active?="{{view == 'month'}}" value="month" on-tap="{{viewButtonTapped}}"></core-icon-button>
 				<core-icon-button icon="view-week" active?="{{view == 'week'}}" value="week" on-tap="{{viewButtonTapped}}"></core-icon-button>
 				<core-icon-button icon="view-day" active?="{{view == 'day'}}" value="day" on-tap="{{viewButtonTapped}}"></core-icon-button>
