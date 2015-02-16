@@ -3,17 +3,12 @@
 <link rel="import" href="./calendar-day-base.html">
 <script src="../../moment/min/moment.min.js"></script>
 
-<polymer-element name="calendar-day" attributes="events date startHour header scroll nohours" extends="calendar-day-base" layout vertical>
+<polymer-element name="calendar-day" attributes="events date startHour scroll nohours" extends="calendar-day-base" layout vertical>
 	<template>
 		<style>
 			:host, calendar-day {
 				display: block;
 				height: 100%;
-			}
-			.dayHeader {
-				background-color: grey;
-				color: white;
-				text-align: center;
 			}
 			.scroll {
 				overflow-y: scroll;
@@ -38,13 +33,6 @@
 				color: transparent;
 			}
 		</style>
-		<template if="{{header != null}}">
-			<div class="dayHeader" layout horizontal center center-justified>
-				<core-icon-button icon="chevron-left" on-tap="{{dayBack}}"></core-icon-button>
-				<div>{{date | formatHeader}}</div>
-				<core-icon-button icon="chevron-right" on-tap="{{dayForward}}"></core-icon-button>
-			</div>
-		</template>
 		<div flex vertical layout class="{{(scroll != null) ? 'scroll' : 'noscroll'}}" relative>
 			<div layout horizontal flex>
 				<!-- Grid rows -->
@@ -89,11 +77,6 @@
 					this.hours.push({value: i, label: m.format('ha') });
 				}
 			},
-			formatHeader: function(date) {
-				if (date) {
-					return date.format('ddd, MMM D').toUpperCase();
-				}
-			},
 			formatTimes: function(event) {
 				if (event)
 					return event.start.format('h:mm') + '-' + event.end.format('h:mm');
@@ -134,14 +117,6 @@
 				var bot = botRow.offsetTop + botRow.offsetHeight;
 				var height = bot - top;
 				return { top: top + 'px', height: height + 'px' };
-			},
-			dayBack: function() {
-				// This syntax, by assigning a new object to the bound property, forces
-				// updates and change events.
-				this.date = moment(this.date).subtract(1, 'd');
-			},
-			dayForward: function() {
-				this.date = moment(this.date).add(1, 'd');
 			},
 			// TODO: make this event useful.
 			eventTapped: function(event, detail, sender) {
