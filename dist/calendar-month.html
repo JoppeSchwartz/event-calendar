@@ -102,7 +102,7 @@
 				return moment(monthFirstDay).startOf('week').add(week, 'week');
 			},
 			get firstDateInCalendar() {
-				return this.curDate.startOf('month').startOf('week');
+				return moment(this.curDate).startOf('month').startOf('week');
 			},
 			get lastDateInCalendar() {
 				return moment(this.firstDateInCalendar).add(7 * this.weeks.length - 1, 'd');
