@@ -22,9 +22,6 @@
 				color: white;
 			}
 		</style>
-		<template if="{{header != null}}">
-			<div layout center center-justified class="header">Event List</div>
-		</template>
 		<div layout vertical class="eventList">
 			<template repeat="{{event in events}}">
 				<div class="eventListItem" layout horizontal around-justified on-tap="{{eventListItemTapped}}">
