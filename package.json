@@ -17,11 +17,7 @@
 	},
 	"repository": "https://github.com/JoppeSchwartz/event-calendar",
 	"dependencies": {
-		"moment": "~2.9.0",
-		"polymer": "Polymer/polymer",
-		"core-icon-button": "Polymer/core-icon-button",
-		"core-pages": "Polymer/core-pages",
-		"paper-dialog": "Polymer/paper-dialog"
+		"moment": "~2.9.0"
 	},
 	"devDependencies": {
 		"grunt": "~0.4.1",
@@ -30,5 +26,11 @@
 		"grunt-gh-pages": "~0.9.1",
 		"grunt-text-replace": "~0.4.0",
 		"web-component-tester": "~2.2.0"
+	},
+	"polymerDependencies": {
+		"polymer": "Polymer/polymer",
+		"core-icon-button": "Polymer/core-icon-button",
+		"core-pages": "Polymer/core-pages",
+		"paper-dialog": "Polymer/paper-dialog"
 	}
 }
