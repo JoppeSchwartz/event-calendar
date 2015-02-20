@@ -1,6 +1,6 @@
 {
   "name": "event-calendar",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Custom calendar polymer components with support for events display.",
   "license": "MIT",
   "main": "dist/event-calendar.html",

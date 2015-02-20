@@ -1,11 +1,34 @@
 {
-    "private": true,
-    "devDependencies": {
-        "grunt": "~0.4.1",
-        "grunt-cli": "~0.1.9",
-        "grunt-contrib-connect": "~0.9.0",
-        "grunt-gh-pages": "~0.9.1",
-        "grunt-text-replace": "~0.4.0",
-				"web-component-tester": "~2.2.0"
-    }
+	"name": "event-calendar",
+	"version": "0.1.6",
+	"author": {
+		"name": "Joe Schwartz",
+		"email": "joppeschwartz@gmail.com",
+		"url": "www.joeschwartz.com"
+	},
+	"description": "Custom calendar polymer component with support for events display. Supports monthly, weekly, daily, and list views.",
+	"bugs": {
+		"url": "https://github.com/JoppeSchwartz/event-calendar/issues",
+		"email": "joppeschwartz@gmail.com"
+	},
+	"license": "MIT",
+	"private": false,
+	"dependencies": {
+	},
+	"repository": "https://github.com/JoppeSchwartz/event-calendar",
+	"dependencies": {
+		"moment": "~2.9.0",
+		"polymer": "Polymer/polymer",
+		"core-icon-button": "Polymer/core-icon-button",
+		"core-pages": "Polymer/core-pages",
+		"paper-dialog": "Polymer/paper-dialog"
+	},
+	"devDependencies": {
+		"grunt": "~0.4.1",
+		"grunt-cli": "~0.1.9",
+		"grunt-contrib-connect": "~0.9.0",
+		"grunt-gh-pages": "~0.9.1",
+		"grunt-text-replace": "~0.4.0",
+		"web-component-tester": "~2.2.0"
+	}
 }
