@@ -68,7 +68,7 @@
 				border: 2px solid black;
 			}
 		</style>
-		<template repeat="{{week in weeks}}">
+		<template repeat="{{week in weeksToDisplay(curDate)}}">
 			<div horizontal layout flex>
 				<template repeat="{{day in weekDays}}">
 					<!--day box-->
@@ -82,20 +82,18 @@
 		</template>
 	</template>
 	<script>
+		// The calendar will display at most 6 weeks at a time.
+		var MAX_WEEKS = 6;
 		Polymer({
 			created: function() {
 				// Convert curDate to moment if needed and set to 12:00 AM
 				// Defaults to now
 				this.curDate = this.curDate ? moment(this.curDate) : moment();
-				this.weeks = [0, 1, 2, 3, 4, 5];
 				this.weekDays = [0,1,2,3,4,5,6];
 				/* The array of dates in the calendar is flat because that's what
-					 Poylmer binding supports at the moment. */
-				this.dates = new Array(this.weeks.length * this.weekDays.length);
-			},
-			ready: function() {
-				//				this.selectedDay = this.dayBoxForDate(this.curDate);
-				//				this.selectedDay.selected = true;
+					 Poylmer binding supports at the moment. 
+				*/
+				this.dates = new Array(MAX_WEEKS * 7);
 			},
 			firstDateInWeek: function(week) {
 				var monthFirstDay = moment(this.curDate).startOf('month');
@@ -105,10 +103,14 @@
 				return moment(this.curDate).startOf('month').startOf('week');
 			},
 			get lastDateInCalendar() {
-				return moment(this.firstDateInCalendar).add(7 * this.weeks.length - 1, 'd');
+				return moment(this.curDate).endOf('month').endOf('week');
+			},
+			weeksToDisplay: function(date) {
+				var nw = this.lastDateInCalendar.diff(this.firstDateInCalendar, 'weeks') + 1;
+				return Object.keys(new Int8Array(nw)).map(Number);
 			},
 			dayBoxForWeekDay: function(week, day) {
-				if (week < 0 || week >= this.weeks.length || day < 0 || day > 6)
+				if (week < 0 || week >= MAX_WEEKS || day < 0 || day > 6)
 					return;
 				return this.shadowRoot.querySelector('#dayBox' + (day + 7 * week));
 			},
@@ -117,7 +119,7 @@
 				if (refDate < this.firstDateInCalendar || refDate > this.lastDateInCalendar)
 					return;
 				var week = Math.floor(refDate.diff(this.firstDateInCalendar, 'days') / 7);
-				if (week >= this.weeks.length) return null;
+				if (week >= MAX_WEEKS) return null;
 				var day = Math.floor(refDate.diff(this.firstDateInWeek(week), 'd'));
 				return this.dayBoxForWeekDay(week, day);
 			},
@@ -129,8 +131,8 @@
 				if (!moment.isMoment(this.curDate))
 					this.curDate = moment(this.curDate);
 				this.async(function() {
-					for (var w = 0; w < this.weeks.length; w++) {
-						for (var d = 0; d < this.weekDays.length; d++) {
+					for (var w = 0; w < MAX_WEEKS; w++) {
+						for (var d = 0; d < 7; d++) {
 							this.dates[w*7 + d] = this.dateForWeekDay(w, d);
 						}
 					}

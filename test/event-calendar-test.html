@@ -130,6 +130,44 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 						done();
 					});
 				});
+
+				suite('test month date api', function() {
+					suiteSetup(function(done) {
+						myCal.curDate = '2015-04-10';
+						myCal.view = 'month';
+						flush(function() {
+							done();
+						});
+					});
+
+					test('correct first day for April 10, 2015 month view', function() {
+						assert(myCal.firstDateInMonthView().isSame(moment('2015-03-29'), 'd'));
+					});
+
+					test('correct last day for April 10, 2015 month view', function() {
+						assert(myCal.lastDateInMonthView().isSame(moment('2015-05-02'), 'd'));
+					});
+				});
+
+				suite('test week date api', function() {
+					suiteSetup(function(done) {
+						myCal.curDate = '2015-04-10';
+						myCal.view = 'week';
+						flush(function() {
+							done();
+						});
+					});
+
+					test('correct first day for April 10, 2015 week view', function() {
+						debugger;
+						assert(myCal.firstDateInWeekView().isSame(moment('2015-04-05'), 'd'));
+					});
+
+					test('correct last day for April 10, 2015 week view', function() {
+						assert(myCal.lastDateInWeekView().isSame(moment('2015-04-11'), 'd'));
+					});
+				});
+
 			});
 
 		</script>
